@@ -1,0 +1,50 @@
+<h1>present</h1>
+<%= button_to 'ログアウト', destroy_user_session_path, method: :delete %>
+<h3>一覧ページ</h3>
+<%= link_to "新規投稿へ", new_tweet_path %>
+<% if user_signed_in? %>
+  <%= link_to "マイページへ", user_path(current_user.id) %>
+<% end %>
+<div class="tweets-container">
+  <% @tweets.each do |t| %>
+    <div class="tweet">
+      
+      <% if t.photo.attached? %>
+        <%= image_tag t.photo, size: '250x200'%>
+      <% end %>
+
+      <% if user_signed_in? %>
+      <% if current_user.already_liked?(t) %>
+          <%= button_to tweet_like_path(id: t.id, tweet_id: t.id), method: :delete do %>
+              <i class="fas fa-heart"></i><%= t.likes.count %>
+          <% end %>
+      <% else %>
+          <%= button_to tweet_likes_path(id: t.id, tweet_id: t.id), method: :post do %>
+              <i class="far fa-heart"></i><%= t.likes.count %>
+          <% end %>
+      <% end %>
+      <% else %>
+      <i class="far fa-heart"></i><%= t.likes.count %>
+      <% end %>
+      
+      <%= t.name %>
+      <%= t.price %>
+      <%= t.link %>
+      <%= link_to "詳細へ", tweet_path(t.id) %>
+      <%= link_to "編集する", edit_tweet_path(t.id) %>
+      <%= button_to "削除する", tweet_path(t.id), method: :delete %>
+    </div>
+  <% end %>
+</div>
+
+<%= form_tag({controller:"tweets",action:"index"}, method: :get) do %>
+    <% Tag.all.each do |t| %>
+        <li><%= check_box :tag_ids, t.name %><%= t.name %></li>
+    <% end %>
+    <%= submit_tag '検索' %>
+<% end %>
+
+<%= form_tag({controller:"tweets",action:"index"}, method: :get) do %>
+    <%= text_field_tag :tag %>
+    <%= submit_tag 'タグを追加' %>
+<% end %>

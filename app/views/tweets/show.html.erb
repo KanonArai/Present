@@ -1,0 +1,29 @@
+<h1>present</h1>
+<h3>Tweet詳細</h3>
+<% @tweet.tags.each do |tag| %>
+    <span><%= tag.name %></span>
+<% end %>
+<div class="tweet">
+  <p><%= @tweet.photo %></p>
+  <p><%= @tweet.name %></p>
+  <p><%= @tweet.price %></p>
+  <p><%= @tweet.link %></p>
+  <p><%= @tweet.created_at %></p>
+   <% if user_signed_in? %>
+      <% if current_user.already_liked?(@tweet) %>
+        <%= button_to tweet_like_path(@tweet), method: :delete do %>
+          <i class="fas fa-heart"></i><%= @tweet.likes.count %>
+        <% end %>
+      <% else %>
+        <%= button_to tweet_likes_path(@tweet), method: :post do %>
+          <i class="far fa-heart"></i><%= @tweet.likes.count %>
+        <% end %>
+      <% end %>
+    <% else %>
+      <i class="far fa-heart"></i><%= @tweet.likes.count %>
+    <% end %>
+</div>
+<%= link_to "編集する", edit_tweet_path(@tweet.id) %>
+
+
+<%= link_to "Tweet一覧に戻る", tweets_path %>
